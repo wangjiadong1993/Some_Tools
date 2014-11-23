@@ -1,8 +1,7 @@
 #this file is about Wifi AP detection
 #WARNING:   this is for OSX !!! 
 #WARNING:  before using it, you should have a symbol link from airport app to the .../bin dir
-#WARNING: the variable name is the ssid of the wifi network and it is customizable but cannot be nil. If you want to detect the AP regardless of ssid, you need to modify a little bit about "if info.include?(name)". otherwise there will be errors
-#for n times, the computer detects the strength of the several routers (of the same ssid, in the example, is NUS) 
+#for n times, the computer detects the strength of the several routers (of the same ssid, in the example, is NUS, customizable, can be nil) 
 #n is customizable
 #at the end, it shows the report about each AP of the same WIFI network
 #from the result, we can notice that, once your computer is still, the strength is quite stable，just a little bit fluctuation
@@ -29,7 +28,7 @@ end
 
 #variable definition
 #used as ssid
-name = "NUS"
+name = "NUS" # can be nil
 #the array of all the distinct APs
 @record_array  = []
 
@@ -54,15 +53,17 @@ def add_record param, strength
 end
 
 #main function part, iteration and call the system command
-(0..20).each do |i|
+(0..2).each do |i|
 	puts i
 	output = `airport -s #{name}`
 	output_array = output.split("\n")
 	output_array.each do |info|
-		if info.include?(name)
-			token_array = info.scan(/\S+/)
+		if !info.scan(/[a-f0-9:]{17}\s\-\d+/).empty?#make sure it is not empty
+			temp_str = info.scan(/[a-f0-9:]{17}\s\-\d+/).last  #extreme condition is the ssid is in this form
+			mac_addr = temp_str.scan(/\S+/)[0]
+			sig_stre = temp_str.scan(/\S+/)[1]
 			#			puts token_array[1] + " " + token_array[2]
-			add_record token_array[1], token_array[2]
+			add_record mac_addr, sig_stre
 		end
 	end
 
