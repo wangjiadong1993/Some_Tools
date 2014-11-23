@@ -21,7 +21,7 @@ class Record
 		return @mac
 	end
 	def show
-		puts @mac +" : " + @records.join(", ")
+		return  {@mac => @records}
 	end
 	public :add_record
 end
@@ -53,7 +53,7 @@ def add_record param, strength
 end
 
 #main function part, iteration and call the system command
-(0..2).each do |i|
+(0..20).each do |i|
 	puts i
 	output = `airport -s #{name}`
 	output_array = output.split("\n")
@@ -72,5 +72,5 @@ end
 
 #show the report of all results
 @record_array.each do |record|
-	record.show	
+	puts	record.show	
 end
